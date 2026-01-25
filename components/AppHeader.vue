@@ -1,7 +1,7 @@
 <template>
   <header 
-    class="fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300"
-    :class="{ 'shadow-lg': isScrolled }"
+    class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+    :class="isScrolled ? 'bg-white shadow-lg' : 'bg-white/5 backdrop-blur-sm'"
   >
     <nav class="container-custom">
       <div class="flex items-center justify-between h-20">
@@ -10,11 +10,12 @@
           <img 
             :src="images.logo.png" 
             alt="Solergy" 
-            class="h-12 w-auto transition-transform duration-300 group-hover:scale-105 mix-blend-multiply"
+            class="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+            :class="isScrolled ? 'mix-blend-multiply' : ''"
           >
           <div class="hidden sm:block">
-            <h1 class="text-xl font-bold text-primary">Solergy</h1>
-            <p class="text-xs text-gray-600">Solar Harmony</p>
+            <h1 class="text-xl font-bold transition-colors duration-300" :class="isScrolled ? 'text-primary' : 'text-white drop-shadow-lg'">Solergy</h1>
+            <p class="text-xs transition-colors duration-300" :class="isScrolled ? 'text-gray-600' : 'text-white/90 drop-shadow'">Solar Harmony</p>
           </div>
         </NuxtLink>
 
@@ -24,8 +25,12 @@
             v-for="link in navLinks" 
             :key="link.path"
             :to="link.path"
-            class="nav-link"
-            :class="{ 'active': isActive(link.path) }"
+            class="nav-link font-extrabold text-lg transition-colors duration-300"
+            :class="[
+              isActive(link.path) ? (isScrolled ? 'text-primary' : 'text-white drop-shadow-lg') : '',
+              !isActive(link.path) && isScrolled ? 'text-gray-700 hover:text-primary' : '',
+              !isActive(link.path) && !isScrolled ? 'text-white/90 hover:text-white drop-shadow-lg' : ''
+            ]"
           >
             {{ link.name }}
           </NuxtLink>
@@ -34,12 +39,14 @@
         <!-- Mobile Menu Button -->
         <button 
           @click="toggleMenu"
-          class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          class="md:hidden p-2 rounded-lg transition-colors"
+          :class="isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/20'"
           aria-label="Toggle menu"
         >
           <svg 
             v-if="!isMenuOpen" 
-            class="w-6 h-6 text-gray-700" 
+            class="w-6 h-6 transition-colors duration-300" 
+            :class="isScrolled ? 'text-gray-700' : 'text-white'"
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -48,7 +55,8 @@
           </svg>
           <svg 
             v-else 
-            class="w-6 h-6 text-gray-700" 
+            class="w-6 h-6 transition-colors duration-300" 
+            :class="isScrolled ? 'text-gray-700' : 'text-white'"
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"

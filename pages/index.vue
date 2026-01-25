@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <!-- Hero Carousel Section -->
+  <div class="relative">
+    <!-- Hero Carousel Section - Full Screen with Navbar Overlay -->
     <HeroCarousel />
 
     <!-- Mission Section -->

@@ -1,5 +1,5 @@
 <template>
-  <section class="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
+  <section class="relative w-full h-screen overflow-hidden -mt-20">
     <!-- Swiper Carousel -->
     <Swiper
       :modules="modules"
@@ -20,7 +20,7 @@
           <!-- Hero Image with Ken Burns Effect -->
           <div class="hero-image-wrapper">
             <img
-              :src="image.webp"
+              :src="image.avif || image.jpg"
               :alt="`Solergy Solar Solutions ${index + 1}`"
               class="hero-image"
             />

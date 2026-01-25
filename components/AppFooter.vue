@@ -9,7 +9,7 @@
             <img 
               :src="images.logo.png" 
               alt="Solergy" 
-              class="h-12 w-auto bg-white rounded p-1"
+              class="h-12 w-auto"
             >
             <div>
               <h3 class="text-xl font-bold">Solergy</h3>
