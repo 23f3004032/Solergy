@@ -222,7 +222,6 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import emailjs from '@emailjs/browser'
 
 const formData = reactive({
   name: '',
@@ -242,49 +241,31 @@ const handleSubmit = async () => {
   errorMessage.value = ''
 
   try {
-    // EmailJS configuration - using environment variables for security
-    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID'
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID'
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY'
-
-    // Check if EmailJS is configured
-    if (serviceId === 'YOUR_SERVICE_ID' || !serviceId) {
-      // For demo purposes, show success after 1 second
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      console.log('Form submitted (demo mode):', formData)
-      
-      formStatus.value = 'success'
-      
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        Object.keys(formData).forEach(key => {
-          formData[key as keyof typeof formData] = ''
-        })
-        formStatus.value = 'idle'
-      }, 3000)
-      
-      return
-    }
-
-    // Send email using EmailJS
-    await emailjs.send(
-      serviceId,
-      templateId,
-      {
-        from_name: formData.name,
-        from_email: formData.email,
+    // Send email via Netlify Function
+    const response = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
         phone: formData.phone,
         address: formData.address,
-        message: formData.message,
-        to_email: 'solergysystems7@gmail.com'
-      },
-      publicKey
-    )
+        message: formData.message
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.error('Server error:', data)
+      throw new Error(data.error || data.details || 'Failed to send email')
+    }
 
     formStatus.value = 'success'
     
-    // Reset form
+    // Reset form after 3 seconds
     setTimeout(() => {
       Object.keys(formData).forEach(key => {
         formData[key as keyof typeof formData] = ''
@@ -295,7 +276,15 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('Error sending email:', error)
     formStatus.value = 'error'
-    errorMessage.value = 'Failed to send message. Please try calling us directly.'
+    
+    // Show detailed error message
+    if (error instanceof Error) {
+      errorMessage.value = error.message.includes('fetch')
+        ? 'Unable to connect to email service. Please call us directly at +91 99739 53809'
+        : error.message
+    } else {
+      errorMessage.value = 'Failed to send message. Please call us directly at +91 99739 53809'
+    }
   } finally {
     isSubmitting.value = false
   }
